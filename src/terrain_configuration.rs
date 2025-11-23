@@ -23,6 +23,20 @@ impl TerrainConfiguration {
     }
 }
 
+fn fractal_noise(seed: i64, width: f32, depth: f32, z: f64, max_height: f32) -> f32 {
+    let mut height: f32 = 0.0;
+    let mut amplitude: f32 = 1.0;
+    let mut frequency: f64 = 1.0;
+    let octaves: i32 = 3;
+    for _i in 0..octaves {
+        height += noise3_ImproveXZ(seed,f64::from(width) * frequency, f64::from(depth) * frequency, z) * amplitude;
+        amplitude *= 0.5;
+        frequency *= 2.0;
+    };
+    height *= max_height;
+    height.clamp(0.0, max_height)
+}
+
 pub fn configure_terrain(
     context: &Context,
     terrain_configuration: &TerrainConfiguration,
@@ -32,19 +46,15 @@ pub fn configure_terrain(
 
     let mut width: f32 = 0.0;
     let mut depth: f32;
+    let max_height: f32 = 4.0;
 
     while width < terrain_configuration.tot_width {
         let mut terrain_layer: Vec<Cube> = Vec::new();
         depth = 0.0;
         while depth < terrain_configuration.tot_depth {
-            let value = noise3_ImproveXZ(
-                terrain_configuration.seed,
-                f64::from(width),
-                f64::from(depth),
-                z,
-            );
+            let value = fractal_noise(terrain_configuration.seed, width, depth, z, max_height);
             let dist = (width * width + depth * depth).sqrt();
-            let falloff = (1.0 - (dist / 200.0)).max(0.0);
+            let falloff = (1.0 - (dist / 100.0)).max(0.0);
             let cube = Cube {
                 x: width,
                 y: depth,
@@ -158,10 +168,17 @@ fn cubes_to_voxel_mesh(
 
     for row in cubes {
         for cube in row {
-            let height = cube.z.floor().max(1.0) as i32;
+            if cube.z < 1.0 {
+                continue;
+            }
+
+            let height_trunc = cube.z.trunc();
+            let fractional_part = cube.z.fract();
+
+            let height = height_trunc.floor() as i32;
 
             // stack from ground (0) up to cube.z
-            for level in 0..height {
+            for level in 1..height {
                 let base = vec3(cube.x, level as f32 * CUBE_SIZE, cube.y);
 
                 add_cube(&mut positions, &mut indices, base, CUBE_SIZE, CUBE_SIZE);
@@ -169,48 +186,20 @@ fn cubes_to_voxel_mesh(
                 // darker color at bottom, lighter at top
                 for _ in 0..8 {
                     let t = cube.z - ((height - level + 1) as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
+                    let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
                     colors.push(Srgba::new(color_r, green, color_b, 255));
                 }
             }
 
-            if cube.z > CUBE_SIZE {
-                let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
+            let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
 
-                add_cube(&mut positions, &mut indices, base, CUBE_SIZE, CUBE_SIZE);
+            add_cube(&mut positions, &mut indices, base, CUBE_SIZE, fractional_part);
 
-                for _ in 0..8 {
-                    let t = cube.z - (height as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
+            for _ in 0..8 {
+                    let t = cube.z;
+                    let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
                     colors.push(Srgba::new(color_r, green, color_b, 255));
                 }
-
-                let base_top = vec3(cube.x, CUBE_SIZE * height as f32 + CUBE_SIZE, cube.y);
-
-                add_cube(
-                    &mut positions,
-                    &mut indices,
-                    base_top,
-                    CUBE_SIZE,
-                    cube.z - CUBE_SIZE,
-                );
-
-                for _ in 0..8 {
-                    let t = cube.z - ((height - 1) as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
-                    colors.push(Srgba::new(color_r, green, color_b, 255));
-                }
-            } else {
-                let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
-
-                add_cube(&mut positions, &mut indices, base, CUBE_SIZE, cube.z);
-
-                for _ in 0..8 {
-                    let t = cube.z - (height as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
-                    colors.push(Srgba::new(color_r, green, color_b, 255));
-                }
-            }
         }
     }
 
