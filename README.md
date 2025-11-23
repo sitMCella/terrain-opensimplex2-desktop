@@ -1,5 +1,7 @@
 # Terrain Generation using OpenSimplex 2
 
+![Document](https://github.com/sitMCella/terrain-opensimplex2-desktop/wiki/images/terrain.png)
+
 ## Table of contents
 
 * [Introduction](#introduction)
