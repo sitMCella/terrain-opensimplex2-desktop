@@ -18,7 +18,17 @@ pub struct TerrainConfiguration {
 }
 
 impl TerrainConfiguration {
-    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String, max_height: f32, failoff: f32, z: f64, fractal_octaves: i32, fractal_frequency: f64) -> Self {
+    pub fn new(
+        tot_width: f32,
+        tot_depth: f32,
+        seed: i64,
+        color: String,
+        max_height: f32,
+        failoff: f32,
+        z: f64,
+        fractal_octaves: i32,
+        fractal_frequency: f64,
+    ) -> Self {
         Self {
             tot_width,
             tot_depth,
@@ -33,16 +43,26 @@ impl TerrainConfiguration {
     }
 }
 
-fn fractal_noise(terrain_configuration: &TerrainConfiguration, width: f32, depth: f32, z: f64) -> f32 {
+fn fractal_noise(
+    terrain_configuration: &TerrainConfiguration,
+    width: f32,
+    depth: f32,
+    z: f64,
+) -> f32 {
     let mut height: f32 = 0.0;
     let mut amplitude: f32 = 1.0;
     let mut frequency: f64 = 1.0;
     let octaves: i32 = terrain_configuration.fractal_octaves;
     for _i in 0..octaves {
-        height += noise3_ImproveXZ(terrain_configuration.seed,f64::from(width) * frequency, f64::from(depth) * frequency, z) * amplitude;
+        height += noise3_ImproveXZ(
+            terrain_configuration.seed,
+            f64::from(width) * frequency,
+            f64::from(depth) * frequency,
+            z,
+        ) * amplitude;
         amplitude *= 0.5;
         frequency *= terrain_configuration.fractal_frequency;
-    };
+    }
     height *= terrain_configuration.max_height;
     height.clamp(0.0, terrain_configuration.max_height)
 }
@@ -202,13 +222,19 @@ fn cubes_to_voxel_mesh(
 
             let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
 
-            add_cube(&mut positions, &mut indices, base, CUBE_SIZE, fractional_part);
+            add_cube(
+                &mut positions,
+                &mut indices,
+                base,
+                CUBE_SIZE,
+                fractional_part,
+            );
 
             for _ in 0..8 {
-                    let t = cube.z;
-                    let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
-                    colors.push(Srgba::new(color_r, green, color_b, 255));
-                }
+                let t = cube.z;
+                let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                colors.push(Srgba::new(color_r, green, color_b, 255));
+            }
         }
     }
 
