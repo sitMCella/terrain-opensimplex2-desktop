@@ -1,0 +1,28 @@
+[package]
+name = "terrainopensimplex2"
+version = "0.1.0"
+edition = "2021"
+
+description = "Visualization of OpenSimplex2"
+authors = ["Marco Cella phcella@libero.it"]
+license = "MIT"
+
+include = [
+	"Cargo.toml",
+	"src/*.rs",
+]
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib", "staticlib", "cdylib"]
+
+[[bin]]
+name = "terrainopensimplex2"
+path = "src/main.rs"
+
+[dependencies]
+three-d = "0.18.2"
+winit = {version = "0.28"}
+actix-web = "4"
+actix-cors = "0.7.1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

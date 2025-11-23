@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Control Panel</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script>
+            function sendValue(endpoint) {
+                fetch(endpoint, {
+                    method: 'PUT'
+                })
+                .then(res => {
+                    if (!res.ok) console.error(`Request failed for ${endpoint}`, res.status);
+                    else console.log(`Sent ${value} to ${endpoint}`);
+                })
+                .catch(err => console.error(`Error sending to ${endpoint}:`, err));
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const terrainWidthElement = document.getElementById('terrainwidth');
+                let terrainWidth = terrainWidthElement.value;
+
+                const terrainDepthElement = document.getElementById('terraindepth');
+                let terrainDepth = terrainDepthElement.value;
+
+                const terrainSeedElement = document.getElementById('terrainseed');
+                let terrainSeed = terrainSeedElement.value;
+
+                const terrainColorElement = document.getElementById('terraincolor');
+                let terrainColor = "647864";
+
+                const cameraPositionXElement = document.getElementById('camerapositionx');
+                let cameraPositionX = cameraPositionXElement.value;
+
+                const cameraPositionYElement = document.getElementById('camerapositiony');
+                let cameraPositionY = cameraPositionYElement.value;
+
+                const cameraPositionZElement = document.getElementById('camerapositionz');
+                let cameraPositionZ = cameraPositionZElement.value;
+
+                const cameraFieldViewYElement = document.getElementById('camerafieldviewy');
+                let cameraFieldViewY = cameraFieldViewYElement.value;
+
+                const cameraFarZElement = document.getElementById('camerafarz');
+                let cameraFarZ = cameraFarZElement.value;
+
+                const cameraTargetXElement = document.getElementById('cameratargetx');
+                let cameraTargetX = cameraTargetXElement.value;
+
+                const cameraTargetYElement = document.getElementById('cameratargety');
+                let cameraTargetY = cameraTargetYElement.value;
+
+                const cameraTargetZElement = document.getElementById('cameratargetz');
+                let cameraTargetZ = cameraTargetZElement.value;
+
+                const cameraUpXElement = document.getElementById('cameraupx');
+                let cameraUpX = cameraUpXElement.value;
+
+                const cameraUpYElement = document.getElementById('cameraupy');
+                let cameraUpY = cameraUpYElement.value;
+
+                const cameraUpZElement = document.getElementById('cameraupz');
+                let cameraUpZ = cameraUpZElement.value;
+
+                function updateTerrainWidth() {
+                    const terrainWidthNewValue = terrainWidthElement.value;
+                    if(terrainWidthNewValue !== terrainWidth) {
+                        terrainWidth = terrainWidthNewValue;
+                        sendValue('http://localhost:8090/api/terrain/width/' + terrainWidth);
+                    }
+                }
+
+                function updateTerrainDepth() {
+                    const terrainDepthNewValue = terrainDepthElement.value;
+                    if(terrainDepthNewValue !== terrainDepth) {
+                        terrainDepth = terrainDepthNewValue;
+                        sendValue('http://localhost:8090/api/terrain/depth/' + terrainDepth);
+                    }
+                }
+                
+                function updateTerrainSeed() {
+                    const terrainSeedhNewValue = terrainSeedElement.value;
+                    if(terrainSeedhNewValue !== terrainSeed) {
+                        terrainSeed = terrainSeedhNewValue;
+                        sendValue('http://localhost:8090/api/terrain/seed/' + terrainSeed);
+                    }
+                }
+
+                function updateTerrainColor() {
+                    const terrainColorNewValue = terrainColorElement.value.substring(1);
+                    if(terrainColorNewValue !== terrainColor) {
+                        terrainColor = terrainColorNewValue;
+                        sendValue('http://localhost:8090/api/terrain/color/' + terrainColor);
+                    }
+                }
+
+                function updateCameraPositionX() {
+                    const cameraPositionXNewValue = cameraPositionXElement.value;
+                    if(cameraPositionXNewValue !== cameraPositionX) {
+                        cameraPositionX = cameraPositionXNewValue;
+                        sendValue('http://localhost:8090/api/camera/position/x/' + cameraPositionX);
+                    }
+                }
+
+                function updateCameraPositionY() {
+                    const cameraPositionYNewValue = cameraPositionYElement.value;
+                    if(cameraPositionYNewValue !== cameraPositionY) {
+                        cameraPositionY = cameraPositionYNewValue;
+                        sendValue('http://localhost:8090/api/camera/position/y/' + cameraPositionY);
+                    }
+                }
+
+                function updateCameraPositionZ() {
+                    const cameraPositionZNewValue = cameraPositionZElement.value;
+                    if(cameraPositionZNewValue !== cameraPositionZ) {
+                        cameraPositionZ = cameraPositionZNewValue;
+                        sendValue('http://localhost:8090/api/camera/position/z/' + cameraPositionZ);
+                    }
+                }
+
+                function updateCameraFieldViewY() {
+                    const cameraFieldViewYNewValue = cameraFieldViewYElement.value;
+                    if(cameraFieldViewYNewValue !== cameraFieldViewY) {
+                        cameraFieldViewY = cameraFieldViewYNewValue;
+                        sendValue('http://localhost:8090/api/camera/fieldview/y/' + cameraFieldViewY);
+                    }
+                }
+
+                function updateCameraFarZ() {
+                    const cameraFarZNewValue = cameraFarZElement.value;
+                    if(cameraFarZNewValue !== cameraFarZ) {
+                        cameraFarZ = cameraFarZNewValue;
+                        sendValue('http://localhost:8090/api/camera/far/z/' + cameraFarZ);
+                    }
+                }
+
+                function updateCameraTargetX() {
+                    const cameraTargetXNewValue = cameraTargetXElement.value;
+                    if(cameraTargetXNewValue !== cameraTargetX) {
+                        cameraTargetX = cameraTargetXNewValue;
+                        sendValue('http://localhost:8090/api/camera/target/x/' + cameraTargetX);
+                    }
+                }
+
+                function updateCameraTargetY() {
+                    const cameraTargetYNewValue = cameraTargetYElement.value;
+                    if(cameraTargetYNewValue !== cameraTargetY) {
+                        cameraTargetY = cameraTargetYNewValue;
+                        sendValue('http://localhost:8090/api/camera/target/y/' + cameraTargetY);
+                    }
+                }
+
+                function updateCameraTargetZ() {
+                    const cameraTargetZNewValue = cameraTargetZElement.value;
+                    if(cameraTargetZNewValue !== cameraTargetZ) {
+                        cameraTargetZ = cameraTargetZNewValue;
+                        sendValue('http://localhost:8090/api/camera/target/z/' + cameraTargetZ);
+                    }
+                }
+
+                function updateCameraUpX() {
+                    const cameraUpXNewValue = cameraUpXElement.value;
+                    if(cameraUpXNewValue !== cameraUpX) {
+                        cameraUpX = cameraUpXNewValue;
+                        sendValue('http://localhost:8090/api/camera/up/x/' + cameraUpX);
+                    }
+                }
+
+                function updateCameraUpY() {
+                    const cameraUpYNewValue = cameraUpYElement.value;
+                    if(cameraUpYNewValue !== cameraUpY) {
+                        cameraUpY = cameraUpYNewValue;
+                        sendValue('http://localhost:8090/api/camera/up/y/' + cameraUpY);
+                    }
+                }
+
+                function updateCameraUpZ() {
+                    const cameraUpZNewValue = cameraUpZElement.value;
+                    if(cameraUpZNewValue !== cameraUpZ) {
+                        cameraUpZ = cameraUpZNewValue;
+                        sendValue('http://localhost:8090/api/camera/up/z/' + cameraUpZ);
+                    }
+                }
+
+                terrainWidthElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainWidth();
+                    }
+                });
+
+                terrainDepthElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainDepth();
+                    }
+                });
+
+                terrainSeedElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainSeed();
+                    }
+                });
+
+                cameraPositionXElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraPositionX();
+                    }
+                });
+
+                cameraPositionYElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraPositionY();
+                    }
+                });
+
+                cameraPositionZElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraPositionZ();
+                    }
+                });
+
+                cameraFieldViewYElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraFieldViewY();
+                    }
+                });
+
+                cameraFarZElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraFarZ();
+                    }
+                });
+
+                cameraTargetXElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraTargetX();
+                    }
+                });
+
+                cameraTargetYElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraTargetY();
+                    }
+                });
+
+                cameraTargetZElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraTargetZ();
+                    }
+                });
+
+                cameraUpXElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraUpX();
+                    }
+                });
+
+                cameraUpYElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraUpY();
+                    }
+                });
+
+                cameraUpZElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateCameraUpZ();
+                    }
+                });
+
+                document.addEventListener('click', (event) => {
+                    updateTerrainWidth();
+                    updateTerrainDepth();
+                    updateTerrainSeed();
+                    updateTerrainColor();
+                    updateCameraPositionX();
+                    updateCameraPositionY();
+                    updateCameraPositionZ();
+                    updateCameraFieldViewY();
+                    updateCameraFarZ();
+                    updateCameraTargetX();
+                    updateCameraTargetY();
+                    updateCameraTargetZ();
+                    updateCameraUpX();
+                    updateCameraUpY();
+                    updateCameraUpZ();
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="container">
+            <div>
+                <h1>Control Panel</h1>
+            </div>
+            <div>
+                <span><h2>Terrain</h2></span>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainwidth" class="form-label">Width:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainwidth" value="50" />
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terraindepth" class="form-label">Depth:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terraindepth" value="50">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainseed" class="form-label">Seed:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainseed" value="1">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terraincolor" class="form-label">Color:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="color" class="form-control form-control-color" id="terraincolor" value="#647864" title="Choose your color">
+                </div>
+            </div>
+
+            <div>
+                <span><h2>Camera</h2></span>
+            </div>
+            <div class="mb-3 align-items-center">
+                <div class="col-auto">
+                    <label>Position:</label>
+                </div>
+                <div class="row mb-3 g-3 align-items-center">
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="camerapositionx" placeholder="X" value="35" />
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="camerapositiony" placeholder="Y" value="22" />
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="camerapositionz" placeholder="Z" value="82" />
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="camerafieldviewy" class="form-label">Field View y:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="camerafieldviewy" value="45">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="camerafarz" class="form-label">Far z:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="camerafarz" value="100">
+                </div>
+            </div>
+            <div class="mb-3 align-items-center">
+                <div class="col-auto">
+                    <label>Target:</label>
+                </div>
+                <div class="row mb-3 g-3 align-items-center">
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="cameratargetx" placeholder="X" value="18" />
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="cameratargety" placeholder="Y" value="-10" />
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="cameratargetz" placeholder="Z" value="0" />
+                    </div>
+                </div>
+            </div>
+            <div class="mb-3 align-items-center">
+                <div class="col-auto">
+                    <label>Up:</label>
+                </div>
+                <div class="row mb-3 g-3 align-items-center">
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="cameraupx" placeholder="X" value="0" />
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="cameraupy" placeholder="Y" value="15" />
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="cameraupz" placeholder="Z" value="0" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
