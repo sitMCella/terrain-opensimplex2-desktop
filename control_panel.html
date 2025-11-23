@@ -27,6 +27,9 @@
                 const terrainSeedElement = document.getElementById('terrainseed');
                 let terrainSeed = terrainSeedElement.value;
 
+                const terrainMaxHeightElement = document.getElementById('terrainmaxheight');
+                let terrainMaxHeight = terrainMaxHeightElement.value;
+
                 const terrainColorElement = document.getElementById('terraincolor');
                 let terrainColor = "647864";
 
@@ -80,9 +83,9 @@
                 }
                 
                 function updateTerrainSeed() {
-                    const terrainSeedhNewValue = terrainSeedElement.value;
-                    if(terrainSeedhNewValue !== terrainSeed) {
-                        terrainSeed = terrainSeedhNewValue;
+                    const terrainSeedNewValue = terrainSeedElement.value;
+                    if(terrainSeedNewValue !== terrainSeed) {
+                        terrainSeed = terrainSeedNewValue;
                         sendValue('http://localhost:8090/api/terrain/seed/' + terrainSeed);
                     }
                 }
@@ -92,6 +95,14 @@
                     if(terrainColorNewValue !== terrainColor) {
                         terrainColor = terrainColorNewValue;
                         sendValue('http://localhost:8090/api/terrain/color/' + terrainColor);
+                    }
+                }
+
+                function updateTerrainMaxHeight() {
+                    const terrainMaxHeightNewValue = terrainMaxHeightElement.value;
+                    if(terrainMaxHeightNewValue !== terrainMaxHeight) {
+                        terrainMaxHeight = terrainMaxHeightNewValue;
+                        sendValue('http://localhost:8090/api/terrain/height/' + terrainMaxHeight);
                     }
                 }
 
@@ -204,6 +215,13 @@
                     }
                 });
 
+                terrainMaxHeightElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainMaxHeight();
+                    }
+                });
+
                 cameraPositionXElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
@@ -286,6 +304,7 @@
                     updateTerrainDepth();
                     updateTerrainSeed();
                     updateTerrainColor();
+                    updateTerrainMaxHeight();
                     updateCameraPositionX();
                     updateCameraPositionY();
                     updateCameraPositionZ();
@@ -339,7 +358,15 @@
                     <label for="terraincolor" class="form-label">Color:</label>
                 </div>
                 <div class="col-auto">
-                    <input type="color" class="form-control form-control-color" id="terraincolor" value="#647864" title="Choose your color">
+                    <input type="color" class="form-control form-control-color" id="terraincolor" value="#304630" title="Choose your color">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainmaxheight" class="form-label">Max Height:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainmaxheight" value="4">
                 </div>
             </div>
 

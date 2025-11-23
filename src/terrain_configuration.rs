@@ -10,15 +10,17 @@ pub struct TerrainConfiguration {
     tot_depth: f32,
     seed: i64,
     color: String,
+    max_height: f32,
 }
 
 impl TerrainConfiguration {
-    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String) -> Self {
+    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String, max_height: f32,) -> Self {
         Self {
             tot_width,
             tot_depth,
             seed,
             color,
+            max_height,
         }
     }
 }
@@ -46,7 +48,7 @@ pub fn configure_terrain(
 
     let mut width: f32 = 0.0;
     let mut depth: f32;
-    let max_height: f32 = 4.0;
+    let max_height: f32 = terrain_configuration.max_height;
 
     while width < terrain_configuration.tot_width {
         let mut terrain_layer: Vec<Cube> = Vec::new();
@@ -230,6 +232,10 @@ pub fn update_configuration(
         },
         Some(ConfigurationMessage::TerrainColor(value)) => TerrainConfiguration {
             color: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainMaxHeight(value)) => TerrainConfiguration {
+            max_height: value,
             ..terrain_configuration
         },
         None => terrain_configuration.clone(),

@@ -4,6 +4,7 @@ pub enum ConfigurationMessage {
     TerrainDepth(f32),
     TerrainSeed(i64),
     TerrainColor(String),
+    TerrainMaxHeight(f32),
     CameraPositionX(f32),
     CameraPositionY(f32),
     CameraPositionZ(f32),
