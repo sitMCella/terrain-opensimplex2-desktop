@@ -33,6 +33,9 @@
                 const terrainMaxHeightElement = document.getElementById('terrainmaxheight');
                 let terrainMaxHeight = terrainMaxHeightElement.value;
 
+                const terrainFailoffElement = document.getElementById('terrainfailoff');
+                let terrainFailoff = terrainFailoffElement.value;
+
                 const terrainFractalOctavesElement = document.getElementById('terrainfractaloctaves');
                 let terrainFractalOctaves = terrainFractalOctavesElement.value;
 
@@ -109,6 +112,14 @@
                     if(terrainMaxHeightNewValue !== terrainMaxHeight) {
                         terrainMaxHeight = terrainMaxHeightNewValue;
                         sendValue('http://localhost:8090/api/terrain/height/' + terrainMaxHeight);
+                    }
+                }
+
+                function updateTerrainFailoff() {
+                    const terrainFailoffNewValue = terrainFailoffElement.value;
+                    if(terrainFailoffNewValue !== terrainFailoff) {
+                        terrainFailoff = terrainFailoffNewValue;
+                        sendValue('http://localhost:8090/api/terrain/failoff/' + terrainFailoff);
                     }
                 }
 
@@ -244,6 +255,13 @@
                     }
                 });
 
+                terrainFailoffElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainFailoff();
+                    }
+                });
+
                 terrainFractalOctavesElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
@@ -341,6 +359,7 @@
                     updateTerrainSeed();
                     updateTerrainColor();
                     updateTerrainMaxHeight();
+                    updateTerrainFailoff();
                     updateTerrainFractalOctaves();
                     updateTerrainFractalFrequency();
                     updateCameraPositionX();
@@ -405,6 +424,14 @@
                 </div>
                 <div class="col-auto">
                     <input class="form-control" type="number" id="terrainmaxheight" value="4">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainfailoff" class="form-label">Failoff:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainfailoff" value="200">
                 </div>
             </div>
             <div class="row mb-3 g-3 align-items-center">
