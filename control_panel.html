@@ -27,11 +27,14 @@
                 const terrainSeedElement = document.getElementById('terrainseed');
                 let terrainSeed = terrainSeedElement.value;
 
+                const terrainColorElement = document.getElementById('terraincolor');
+                let terrainColor = "304630";
+
                 const terrainMaxHeightElement = document.getElementById('terrainmaxheight');
                 let terrainMaxHeight = terrainMaxHeightElement.value;
 
-                const terrainColorElement = document.getElementById('terraincolor');
-                let terrainColor = "647864";
+                const terrainFractalOctavesElement = document.getElementById('terrainfractaloctaves');
+                let terrainFractalOctaves = terrainFractalOctavesElement.value;
 
                 const cameraPositionXElement = document.getElementById('camerapositionx');
                 let cameraPositionX = cameraPositionXElement.value;
@@ -103,6 +106,14 @@
                     if(terrainMaxHeightNewValue !== terrainMaxHeight) {
                         terrainMaxHeight = terrainMaxHeightNewValue;
                         sendValue('http://localhost:8090/api/terrain/height/' + terrainMaxHeight);
+                    }
+                }
+
+                function updateTerrainFractalOctaves() {
+                    const terrainFractalOctavesNewValue = terrainFractalOctavesElement.value;
+                    if(terrainFractalOctavesNewValue !== terrainFractalOctaves) {
+                        terrainFractalOctaves = terrainFractalOctavesNewValue;
+                        sendValue('http://localhost:8090/api/terrain/fractal/octaves/' + terrainFractalOctaves);
                     }
                 }
 
@@ -222,6 +233,13 @@
                     }
                 });
 
+                terrainFractalOctavesElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainFractalOctaves();
+                    }
+                });
+
                 cameraPositionXElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
@@ -305,6 +323,7 @@
                     updateTerrainSeed();
                     updateTerrainColor();
                     updateTerrainMaxHeight();
+                    updateTerrainFractalOctaves();
                     updateCameraPositionX();
                     updateCameraPositionY();
                     updateCameraPositionZ();
@@ -367,6 +386,14 @@
                 </div>
                 <div class="col-auto">
                     <input class="form-control" type="number" id="terrainmaxheight" value="4">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainfractaloctaves" class="form-label">Fractal Octaves:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainfractaloctaves" value="4">
                 </div>
             </div>
 

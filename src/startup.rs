@@ -4,7 +4,7 @@ use crate::routes::{
     camera_change_position_y, camera_change_position_z, camera_change_target_x,
     camera_change_target_y, camera_change_target_z, camera_change_up_x, camera_change_up_y,
     camera_change_up_z, health_check, terrain_change_color, terrain_change_depth,
-    terrain_change_seed, terrain_change_width, terrain_change_max_height,
+    terrain_change_seed, terrain_change_width, terrain_change_max_height, terrain_change_fractal_octaves,
 };
 use actix_cors::Cors;
 use actix_web::dev::Server;
@@ -58,6 +58,10 @@ fn config_app(tx: Sender<ConfigurationMessage>) -> Box<dyn Fn(&mut ServiceConfig
             .service(
                 web::resource("/api/terrain/height/{height}")
                     .route(web::put().to(terrain_change_max_height)),
+            )
+            .service(
+                web::resource("/api/terrain/fractal/octaves/{octaves}")
+                    .route(web::put().to(terrain_change_fractal_octaves)),
             )
             .service(
                 web::resource("/api/camera/position/x/{x}")

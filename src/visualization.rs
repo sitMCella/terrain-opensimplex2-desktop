@@ -43,7 +43,7 @@ pub fn window(rx: Receiver<ConfigurationMessage>) {
     let mut control = OrbitControl::new(camera.target(), 1.0, 100.0);
 
     let mut terrain_configuration =
-        TerrainConfiguration::new(50.0, 50.0, 40000345266, "304630".to_string(), 4.0);
+        TerrainConfiguration::new(50.0, 50.0, 40000345266, "304630".to_string(), 4.0, 3);
 
     let mut model = configure_terrain(&context, &terrain_configuration);
 

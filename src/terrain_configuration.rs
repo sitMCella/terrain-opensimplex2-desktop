@@ -11,32 +11,35 @@ pub struct TerrainConfiguration {
     seed: i64,
     color: String,
     max_height: f32,
+    fractal_octaves: i32,
 }
 
 impl TerrainConfiguration {
-    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String, max_height: f32,) -> Self {
+    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String, max_height: f32, fractal_octaves: i32) -> Self {
         Self {
             tot_width,
             tot_depth,
             seed,
             color,
             max_height,
+            fractal_octaves,
         }
     }
 }
 
-fn fractal_noise(seed: i64, width: f32, depth: f32, z: f64, max_height: f32) -> f32 {
+fn fractal_noise(terrain_configuration: &TerrainConfiguration, width: f32, depth: f32, z: f64) -> f32 {
     let mut height: f32 = 0.0;
     let mut amplitude: f32 = 1.0;
     let mut frequency: f64 = 1.0;
-    let octaves: i32 = 3;
-    for _i in 0..octaves {
-        height += noise3_ImproveXZ(seed,f64::from(width) * frequency, f64::from(depth) * frequency, z) * amplitude;
+    let octaves: i32 = terrain_configuration.fractal_octaves;
+    println!("octaves {}", octaves);
+    for _i in 1..octaves {
+        height += noise3_ImproveXZ(terrain_configuration.seed,f64::from(width) * frequency, f64::from(depth) * frequency, z) * amplitude;
         amplitude *= 0.5;
         frequency *= 2.0;
     };
-    height *= max_height;
-    height.clamp(0.0, max_height)
+    height *= terrain_configuration.max_height;
+    height.clamp(0.0, terrain_configuration.max_height)
 }
 
 pub fn configure_terrain(
@@ -48,13 +51,12 @@ pub fn configure_terrain(
 
     let mut width: f32 = 0.0;
     let mut depth: f32;
-    let max_height: f32 = terrain_configuration.max_height;
 
     while width < terrain_configuration.tot_width {
         let mut terrain_layer: Vec<Cube> = Vec::new();
         depth = 0.0;
         while depth < terrain_configuration.tot_depth {
-            let value = fractal_noise(terrain_configuration.seed, width, depth, z, max_height);
+            let value = fractal_noise(terrain_configuration, width, depth, z);
             let dist = (width * width + depth * depth).sqrt();
             let falloff = (1.0 - (dist / 100.0)).max(0.0);
             let cube = Cube {
@@ -236,6 +238,10 @@ pub fn update_configuration(
         },
         Some(ConfigurationMessage::TerrainMaxHeight(value)) => TerrainConfiguration {
             max_height: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainFractalOctaves(value)) => TerrainConfiguration {
+            fractal_octaves: value,
             ..terrain_configuration
         },
         None => terrain_configuration.clone(),
