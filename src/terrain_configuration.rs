@@ -10,17 +10,61 @@ pub struct TerrainConfiguration {
     tot_depth: f32,
     seed: i64,
     color: String,
+    max_height: f32,
+    failoff: f32,
+    z: f64,
+    fractal_octaves: i32,
+    fractal_frequency: f64,
 }
 
 impl TerrainConfiguration {
-    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String) -> Self {
+    pub fn new(
+        tot_width: f32,
+        tot_depth: f32,
+        seed: i64,
+        color: String,
+        max_height: f32,
+        failoff: f32,
+        z: f64,
+        fractal_octaves: i32,
+        fractal_frequency: f64,
+    ) -> Self {
         Self {
             tot_width,
             tot_depth,
             seed,
             color,
+            max_height,
+            failoff,
+            z,
+            fractal_octaves,
+            fractal_frequency,
         }
     }
+}
+
+fn fractal_noise(
+    terrain_configuration: &TerrainConfiguration,
+    width: f32,
+    depth: f32,
+    z: f64,
+) -> f32 {
+    let mut height: f32 = 0.0;
+    let mut amplitude: f32 = 1.0;
+    let mut frequency: f64 = 1.0;
+    let octaves: i32 = terrain_configuration.fractal_octaves;
+    for _i in 0..octaves {
+        height += noise3_ImproveXZ(
+            terrain_configuration.seed,
+            f64::from(width) * frequency,
+            f64::from(depth) * frequency,
+            z,
+        ) * amplitude;
+        amplitude *= 0.5;
+        frequency *= terrain_configuration.fractal_frequency;
+    }
+    height *= terrain_configuration.max_height;
+    height.clamp(0.0, terrain_configuration.max_height)
 }
 
 pub fn configure_terrain(
@@ -28,7 +72,7 @@ pub fn configure_terrain(
     terrain_configuration: &TerrainConfiguration,
 ) -> Gm<Mesh, ColorMaterial> {
     let mut terrain: Vec<Vec<Cube>> = Vec::new();
-    let z: f64 = 25.045;
+    let z: f64 = terrain_configuration.z;
 
     let mut width: f32 = 0.0;
     let mut depth: f32;
@@ -37,14 +81,9 @@ pub fn configure_terrain(
         let mut terrain_layer: Vec<Cube> = Vec::new();
         depth = 0.0;
         while depth < terrain_configuration.tot_depth {
-            let value = noise3_ImproveXZ(
-                terrain_configuration.seed,
-                f64::from(width),
-                f64::from(depth),
-                z,
-            );
+            let value = fractal_noise(terrain_configuration, width, depth, z);
             let dist = (width * width + depth * depth).sqrt();
-            let falloff = (1.0 - (dist / 200.0)).max(0.0);
+            let falloff = (1.0 - (dist / terrain_configuration.failoff)).max(0.0);
             let cube = Cube {
                 x: width,
                 y: depth,
@@ -158,10 +197,17 @@ fn cubes_to_voxel_mesh(
 
     for row in cubes {
         for cube in row {
-            let height = cube.z.floor().max(1.0) as i32;
+            if cube.z < 1.0 {
+                continue;
+            }
+
+            let height_trunc = cube.z.trunc();
+            let fractional_part = cube.z.fract();
+
+            let height = height_trunc.floor() as i32;
 
             // stack from ground (0) up to cube.z
-            for level in 0..height {
+            for level in 1..height {
                 let base = vec3(cube.x, level as f32 * CUBE_SIZE, cube.y);
 
                 add_cube(&mut positions, &mut indices, base, CUBE_SIZE, CUBE_SIZE);
@@ -169,47 +215,25 @@ fn cubes_to_voxel_mesh(
                 // darker color at bottom, lighter at top
                 for _ in 0..8 {
                     let t = cube.z - ((height - level + 1) as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
+                    let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
                     colors.push(Srgba::new(color_r, green, color_b, 255));
                 }
             }
 
-            if cube.z > CUBE_SIZE {
-                let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
+            let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
 
-                add_cube(&mut positions, &mut indices, base, CUBE_SIZE, CUBE_SIZE);
+            add_cube(
+                &mut positions,
+                &mut indices,
+                base,
+                CUBE_SIZE,
+                fractional_part,
+            );
 
-                for _ in 0..8 {
-                    let t = cube.z - (height as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
-                    colors.push(Srgba::new(color_r, green, color_b, 255));
-                }
-
-                let base_top = vec3(cube.x, CUBE_SIZE * height as f32 + CUBE_SIZE, cube.y);
-
-                add_cube(
-                    &mut positions,
-                    &mut indices,
-                    base_top,
-                    CUBE_SIZE,
-                    cube.z - CUBE_SIZE,
-                );
-
-                for _ in 0..8 {
-                    let t = cube.z - ((height - 1) as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
-                    colors.push(Srgba::new(color_r, green, color_b, 255));
-                }
-            } else {
-                let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
-
-                add_cube(&mut positions, &mut indices, base, CUBE_SIZE, cube.z);
-
-                for _ in 0..8 {
-                    let t = cube.z - (height as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.6 * t) * 50.0) as u8;
-                    colors.push(Srgba::new(color_r, green, color_b, 255));
-                }
+            for _ in 0..8 {
+                let t = cube.z;
+                let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                colors.push(Srgba::new(color_r, green, color_b, 255));
             }
         }
     }
@@ -241,6 +265,26 @@ pub fn update_configuration(
         },
         Some(ConfigurationMessage::TerrainColor(value)) => TerrainConfiguration {
             color: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainMaxHeight(value)) => TerrainConfiguration {
+            max_height: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainFailoff(value)) => TerrainConfiguration {
+            failoff: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainZ(value)) => TerrainConfiguration {
+            z: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainFractalOctaves(value)) => TerrainConfiguration {
+            fractal_octaves: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainFractalFrequency(value)) => TerrainConfiguration {
+            fractal_frequency: value,
             ..terrain_configuration
         },
         None => terrain_configuration.clone(),

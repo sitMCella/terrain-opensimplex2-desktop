@@ -28,7 +28,22 @@
                 let terrainSeed = terrainSeedElement.value;
 
                 const terrainColorElement = document.getElementById('terraincolor');
-                let terrainColor = "647864";
+                let terrainColor = "304630";
+
+                const terrainMaxHeightElement = document.getElementById('terrainmaxheight');
+                let terrainMaxHeight = terrainMaxHeightElement.value;
+
+                const terrainFailoffElement = document.getElementById('terrainfailoff');
+                let terrainFailoff = terrainFailoffElement.value;
+
+                const terrainZElement = document.getElementById('terrainz');
+                let terrainZ = terrainZElement.value;
+
+                const terrainFractalOctavesElement = document.getElementById('terrainfractaloctaves');
+                let terrainFractalOctaves = terrainFractalOctavesElement.value;
+
+                const terrainFractalFrequencyElement = document.getElementById('terrainfractalfrequency');
+                let terrainFractalFrequency = terrainFractalFrequencyElement.value;
 
                 const cameraPositionXElement = document.getElementById('camerapositionx');
                 let cameraPositionX = cameraPositionXElement.value;
@@ -80,9 +95,9 @@
                 }
                 
                 function updateTerrainSeed() {
-                    const terrainSeedhNewValue = terrainSeedElement.value;
-                    if(terrainSeedhNewValue !== terrainSeed) {
-                        terrainSeed = terrainSeedhNewValue;
+                    const terrainSeedNewValue = terrainSeedElement.value;
+                    if(terrainSeedNewValue !== terrainSeed) {
+                        terrainSeed = terrainSeedNewValue;
                         sendValue('http://localhost:8090/api/terrain/seed/' + terrainSeed);
                     }
                 }
@@ -92,6 +107,46 @@
                     if(terrainColorNewValue !== terrainColor) {
                         terrainColor = terrainColorNewValue;
                         sendValue('http://localhost:8090/api/terrain/color/' + terrainColor);
+                    }
+                }
+
+                function updateTerrainMaxHeight() {
+                    const terrainMaxHeightNewValue = terrainMaxHeightElement.value;
+                    if(terrainMaxHeightNewValue !== terrainMaxHeight) {
+                        terrainMaxHeight = terrainMaxHeightNewValue;
+                        sendValue('http://localhost:8090/api/terrain/height/' + terrainMaxHeight);
+                    }
+                }
+
+                function updateTerrainFailoff() {
+                    const terrainFailoffNewValue = terrainFailoffElement.value;
+                    if(terrainFailoffNewValue !== terrainFailoff) {
+                        terrainFailoff = terrainFailoffNewValue;
+                        sendValue('http://localhost:8090/api/terrain/failoff/' + terrainFailoff);
+                    }
+                }
+
+                function updateTerrainZ() {
+                    const terrainZNewValue = terrainZElement.value;
+                    if(terrainZNewValue !== terrainZ) {
+                        terrainZ = terrainZNewValue;
+                        sendValue('http://localhost:8090/api/terrain/z/' + terrainZ);
+                    }
+                }
+
+                function updateTerrainFractalOctaves() {
+                    const terrainFractalOctavesNewValue = terrainFractalOctavesElement.value;
+                    if(terrainFractalOctavesNewValue !== terrainFractalOctaves) {
+                        terrainFractalOctaves = terrainFractalOctavesNewValue;
+                        sendValue('http://localhost:8090/api/terrain/fractal/octaves/' + terrainFractalOctaves);
+                    }
+                }
+
+                function updateTerrainFractalFrequency() {
+                    const terrainFractalFrequencyNewValue = terrainFractalFrequencyElement.value;
+                    if(terrainFractalFrequencyNewValue !== terrainFractalFrequency) {
+                        terrainFractalFrequency = terrainFractalFrequencyNewValue;
+                        sendValue('http://localhost:8090/api/terrain/fractal/frequency/' + terrainFractalFrequency);
                     }
                 }
 
@@ -204,6 +259,41 @@
                     }
                 });
 
+                terrainMaxHeightElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainMaxHeight();
+                    }
+                });
+
+                terrainFailoffElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainFailoff();
+                    }
+                });
+
+                terrainZElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainZ();
+                    }
+                });
+
+                terrainFractalOctavesElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainFractalOctaves();
+                    }
+                });
+
+                terrainFractalFrequencyElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainFractalFrequency();
+                    }
+                });
+
                 cameraPositionXElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
@@ -286,6 +376,11 @@
                     updateTerrainDepth();
                     updateTerrainSeed();
                     updateTerrainColor();
+                    updateTerrainMaxHeight();
+                    updateTerrainFailoff();
+                    updateTerrainZ();
+                    updateTerrainFractalOctaves();
+                    updateTerrainFractalFrequency();
                     updateCameraPositionX();
                     updateCameraPositionY();
                     updateCameraPositionZ();
@@ -339,7 +434,47 @@
                     <label for="terraincolor" class="form-label">Color:</label>
                 </div>
                 <div class="col-auto">
-                    <input type="color" class="form-control form-control-color" id="terraincolor" value="#647864" title="Choose your color">
+                    <input type="color" class="form-control form-control-color" id="terraincolor" value="#304630" title="Choose your color">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainmaxheight" class="form-label">Max Height:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainmaxheight" value="4">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainfailoff" class="form-label">Failoff:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainfailoff" value="200">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainz" class="form-label">Z:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainz" value="25">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainfractaloctaves" class="form-label">Fractal Octaves:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainfractaloctaves" value="3">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainfractalfrequency" class="form-label">Fractal Frequency:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainfractalfrequency" value="2">
                 </div>
             </div>
 

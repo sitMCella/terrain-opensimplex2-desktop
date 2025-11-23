@@ -76,3 +76,78 @@ pub async fn terrain_change_color(
     let _ = tx.send(ConfigurationMessage::TerrainColor(new_color));
     HttpResponse::Ok().finish()
 }
+
+// curl -i -X PUT http://127.0.0.1:8090/api/terrain/height/{height}
+pub async fn terrain_change_max_height(
+    path_param: web::Path<String>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_max_height = path_param.into_inner();
+    match new_max_height.parse() {
+        Ok(value) => {
+            let _ = tx.send(ConfigurationMessage::TerrainMaxHeight(value));
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => HttpResponse::BadRequest().finish(),
+    }
+}
+
+// curl -i -X PUT http://127.0.0.1:8090/api/terrain/failoff/{failoff}
+pub async fn terrain_change_failoff(
+    path_param: web::Path<String>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_failoff = path_param.into_inner();
+    match new_failoff.parse() {
+        Ok(value) => {
+            let _ = tx.send(ConfigurationMessage::TerrainFailoff(value));
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => HttpResponse::BadRequest().finish(),
+    }
+}
+
+// curl -i -X PUT http://127.0.0.1:8090/api/terrain/z/{z}
+pub async fn terrain_change_z(
+    path_param: web::Path<String>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_z = path_param.into_inner();
+    match new_z.parse() {
+        Ok(value) => {
+            let _ = tx.send(ConfigurationMessage::TerrainZ(value));
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => HttpResponse::BadRequest().finish(),
+    }
+}
+
+// curl -i -X PUT http://127.0.0.1:8090/api/terrain/fractal/octaves/{octaves}
+pub async fn terrain_change_fractal_octaves(
+    path_param: web::Path<String>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_fractal_octaves = path_param.into_inner();
+    match new_fractal_octaves.parse() {
+        Ok(value) => {
+            let _ = tx.send(ConfigurationMessage::TerrainFractalOctaves(value));
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => HttpResponse::BadRequest().finish(),
+    }
+}
+
+// curl -i -X PUT http://127.0.0.1:8090/api/terrain/fractal/frequency/{frequency}
+pub async fn terrain_change_fractal_frequency(
+    path_param: web::Path<String>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_fractal_frequency = path_param.into_inner();
+    match new_fractal_frequency.parse() {
+        Ok(value) => {
+            let _ = tx.send(ConfigurationMessage::TerrainFractalFrequency(value));
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => HttpResponse::BadRequest().finish(),
+    }
+}
