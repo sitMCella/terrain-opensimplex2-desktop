@@ -12,12 +12,13 @@ pub struct TerrainConfiguration {
     color: String,
     max_height: f32,
     failoff: f32,
+    z: f64,
     fractal_octaves: i32,
     fractal_frequency: f64,
 }
 
 impl TerrainConfiguration {
-    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String, max_height: f32, failoff: f32, fractal_octaves: i32, fractal_frequency: f64) -> Self {
+    pub fn new(tot_width: f32, tot_depth: f32, seed: i64, color: String, max_height: f32, failoff: f32, z: f64, fractal_octaves: i32, fractal_frequency: f64) -> Self {
         Self {
             tot_width,
             tot_depth,
@@ -25,6 +26,7 @@ impl TerrainConfiguration {
             color,
             max_height,
             failoff,
+            z,
             fractal_octaves,
             fractal_frequency,
         }
@@ -50,7 +52,7 @@ pub fn configure_terrain(
     terrain_configuration: &TerrainConfiguration,
 ) -> Gm<Mesh, ColorMaterial> {
     let mut terrain: Vec<Vec<Cube>> = Vec::new();
-    let z: f64 = 25.045;
+    let z: f64 = terrain_configuration.z;
 
     let mut width: f32 = 0.0;
     let mut depth: f32;
@@ -245,6 +247,10 @@ pub fn update_configuration(
         },
         Some(ConfigurationMessage::TerrainFailoff(value)) => TerrainConfiguration {
             failoff: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainZ(value)) => TerrainConfiguration {
+            z: value,
             ..terrain_configuration
         },
         Some(ConfigurationMessage::TerrainFractalOctaves(value)) => TerrainConfiguration {

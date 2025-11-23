@@ -107,6 +107,21 @@ pub async fn terrain_change_failoff(
     }
 }
 
+// curl -i -X PUT http://127.0.0.1:8090/api/terrain/z/{z}
+pub async fn terrain_change_z(
+    path_param: web::Path<String>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_z = path_param.into_inner();
+    match new_z.parse() {
+        Ok(value) => {
+            let _ = tx.send(ConfigurationMessage::TerrainZ(value));
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => HttpResponse::BadRequest().finish(),
+    }
+}
+
 // curl -i -X PUT http://127.0.0.1:8090/api/terrain/fractal/octaves/{octaves}
 pub async fn terrain_change_fractal_octaves(
     path_param: web::Path<String>,

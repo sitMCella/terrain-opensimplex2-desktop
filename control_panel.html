@@ -36,6 +36,9 @@
                 const terrainFailoffElement = document.getElementById('terrainfailoff');
                 let terrainFailoff = terrainFailoffElement.value;
 
+                const terrainZElement = document.getElementById('terrainz');
+                let terrainZ = terrainZElement.value;
+
                 const terrainFractalOctavesElement = document.getElementById('terrainfractaloctaves');
                 let terrainFractalOctaves = terrainFractalOctavesElement.value;
 
@@ -120,6 +123,14 @@
                     if(terrainFailoffNewValue !== terrainFailoff) {
                         terrainFailoff = terrainFailoffNewValue;
                         sendValue('http://localhost:8090/api/terrain/failoff/' + terrainFailoff);
+                    }
+                }
+
+                function updateTerrainZ() {
+                    const terrainZNewValue = terrainZElement.value;
+                    if(terrainZNewValue !== terrainZ) {
+                        terrainZ = terrainZNewValue;
+                        sendValue('http://localhost:8090/api/terrain/z/' + terrainZ);
                     }
                 }
 
@@ -262,6 +273,13 @@
                     }
                 });
 
+                terrainZElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainZ();
+                    }
+                });
+
                 terrainFractalOctavesElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
@@ -360,6 +378,7 @@
                     updateTerrainColor();
                     updateTerrainMaxHeight();
                     updateTerrainFailoff();
+                    updateTerrainZ();
                     updateTerrainFractalOctaves();
                     updateTerrainFractalFrequency();
                     updateCameraPositionX();
@@ -432,6 +451,14 @@
                 </div>
                 <div class="col-auto">
                     <input class="form-control" type="number" id="terrainfailoff" value="200">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainz" class="form-label">Z:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainz" value="25">
                 </div>
             </div>
             <div class="row mb-3 g-3 align-items-center">
