@@ -106,3 +106,18 @@ pub async fn terrain_change_fractal_octaves(
         Err(_) => HttpResponse::BadRequest().finish(),
     }
 }
+
+// curl -i -X PUT http://127.0.0.1:8090/api/terrain/fractal/frequency/{frequency}
+pub async fn terrain_change_fractal_frequency(
+    path_param: web::Path<String>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_fractal_frequency = path_param.into_inner();
+    match new_fractal_frequency.parse() {
+        Ok(value) => {
+            let _ = tx.send(ConfigurationMessage::TerrainFractalFrequency(value));
+            HttpResponse::Ok().finish()
+        }
+        Err(_) => HttpResponse::BadRequest().finish(),
+    }
+}

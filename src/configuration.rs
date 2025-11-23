@@ -6,6 +6,7 @@ pub enum ConfigurationMessage {
     TerrainColor(String),
     TerrainMaxHeight(f32),
     TerrainFractalOctaves(i32),
+    TerrainFractalFrequency(f64),
     CameraPositionX(f32),
     CameraPositionY(f32),
     CameraPositionZ(f32),

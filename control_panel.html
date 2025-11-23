@@ -36,6 +36,9 @@
                 const terrainFractalOctavesElement = document.getElementById('terrainfractaloctaves');
                 let terrainFractalOctaves = terrainFractalOctavesElement.value;
 
+                const terrainFractalFrequencyElement = document.getElementById('terrainfractalfrequency');
+                let terrainFractalFrequency = terrainFractalFrequencyElement.value;
+
                 const cameraPositionXElement = document.getElementById('camerapositionx');
                 let cameraPositionX = cameraPositionXElement.value;
 
@@ -114,6 +117,14 @@
                     if(terrainFractalOctavesNewValue !== terrainFractalOctaves) {
                         terrainFractalOctaves = terrainFractalOctavesNewValue;
                         sendValue('http://localhost:8090/api/terrain/fractal/octaves/' + terrainFractalOctaves);
+                    }
+                }
+
+                function updateTerrainFractalFrequency() {
+                    const terrainFractalFrequencyNewValue = terrainFractalFrequencyElement.value;
+                    if(terrainFractalFrequencyNewValue !== terrainFractalFrequency) {
+                        terrainFractalFrequency = terrainFractalFrequencyNewValue;
+                        sendValue('http://localhost:8090/api/terrain/fractal/frequency/' + terrainFractalFrequency);
                     }
                 }
 
@@ -240,6 +251,13 @@
                     }
                 });
 
+                terrainFractalFrequencyElement.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        updateTerrainFractalFrequency();
+                    }
+                });
+
                 cameraPositionXElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         event.preventDefault();
@@ -324,6 +342,7 @@
                     updateTerrainColor();
                     updateTerrainMaxHeight();
                     updateTerrainFractalOctaves();
+                    updateTerrainFractalFrequency();
                     updateCameraPositionX();
                     updateCameraPositionY();
                     updateCameraPositionZ();
@@ -393,7 +412,15 @@
                     <label for="terrainfractaloctaves" class="form-label">Fractal Octaves:</label>
                 </div>
                 <div class="col-auto">
-                    <input class="form-control" type="number" id="terrainfractaloctaves" value="4">
+                    <input class="form-control" type="number" id="terrainfractaloctaves" value="3">
+                </div>
+            </div>
+            <div class="row mb-3 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="terrainfractalfrequency" class="form-label">Fractal Frequency:</label>
+                </div>
+                <div class="col-auto">
+                    <input class="form-control" type="number" id="terrainfractalfrequency" value="2">
                 </div>
             </div>
 
