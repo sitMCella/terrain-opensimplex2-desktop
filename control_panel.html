@@ -6,9 +6,15 @@
         <title>Control Panel</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <script>
-            function sendValue(endpoint) {
+            function sendValue(endpoint, value) {
                 fetch(endpoint, {
-                    method: 'PUT'
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        value: value
+                    })
                 })
                 .then(res => {
                     if (!res.ok) console.error(`Request failed for ${endpoint}`, res.status);
@@ -82,7 +88,7 @@
                     const terrainWidthNewValue = terrainWidthElement.value;
                     if(terrainWidthNewValue !== terrainWidth) {
                         terrainWidth = terrainWidthNewValue;
-                        sendValue('http://localhost:8090/api/terrain/width/' + terrainWidth);
+                        sendValue('http://localhost:8090/api/terrain/width', parseFloat(terrainWidth));
                     }
                 }
 
@@ -90,7 +96,7 @@
                     const terrainDepthNewValue = terrainDepthElement.value;
                     if(terrainDepthNewValue !== terrainDepth) {
                         terrainDepth = terrainDepthNewValue;
-                        sendValue('http://localhost:8090/api/terrain/depth/' + terrainDepth);
+                        sendValue('http://localhost:8090/api/terrain/depth', parseFloat(terrainDepth));
                     }
                 }
                 
@@ -98,7 +104,7 @@
                     const terrainSeedNewValue = terrainSeedElement.value;
                     if(terrainSeedNewValue !== terrainSeed) {
                         terrainSeed = terrainSeedNewValue;
-                        sendValue('http://localhost:8090/api/terrain/seed/' + terrainSeed);
+                        sendValue('http://localhost:8090/api/terrain/seed', parseInt(terrainSeed));
                     }
                 }
 
@@ -106,7 +112,7 @@
                     const terrainColorNewValue = terrainColorElement.value.substring(1);
                     if(terrainColorNewValue !== terrainColor) {
                         terrainColor = terrainColorNewValue;
-                        sendValue('http://localhost:8090/api/terrain/color/' + terrainColor);
+                        sendValue('http://localhost:8090/api/terrain/color', terrainColor);
                     }
                 }
 
@@ -114,7 +120,7 @@
                     const terrainMaxHeightNewValue = terrainMaxHeightElement.value;
                     if(terrainMaxHeightNewValue !== terrainMaxHeight) {
                         terrainMaxHeight = terrainMaxHeightNewValue;
-                        sendValue('http://localhost:8090/api/terrain/height/' + terrainMaxHeight);
+                        sendValue('http://localhost:8090/api/terrain/height', parseFloat(terrainMaxHeight));
                     }
                 }
 
@@ -122,7 +128,7 @@
                     const terrainFailoffNewValue = terrainFailoffElement.value;
                     if(terrainFailoffNewValue !== terrainFailoff) {
                         terrainFailoff = terrainFailoffNewValue;
-                        sendValue('http://localhost:8090/api/terrain/failoff/' + terrainFailoff);
+                        sendValue('http://localhost:8090/api/terrain/failoff', parseFloat(terrainFailoff));
                     }
                 }
 
@@ -130,7 +136,7 @@
                     const terrainZNewValue = terrainZElement.value;
                     if(terrainZNewValue !== terrainZ) {
                         terrainZ = terrainZNewValue;
-                        sendValue('http://localhost:8090/api/terrain/z/' + terrainZ);
+                        sendValue('http://localhost:8090/api/terrain/z', parseFloat(terrainZ));
                     }
                 }
 
@@ -138,7 +144,7 @@
                     const terrainFractalOctavesNewValue = terrainFractalOctavesElement.value;
                     if(terrainFractalOctavesNewValue !== terrainFractalOctaves) {
                         terrainFractalOctaves = terrainFractalOctavesNewValue;
-                        sendValue('http://localhost:8090/api/terrain/fractal/octaves/' + terrainFractalOctaves);
+                        sendValue('http://localhost:8090/api/terrain/fractal/octaves', parseInt(terrainFractalOctaves));
                     }
                 }
 
@@ -146,7 +152,7 @@
                     const terrainFractalFrequencyNewValue = terrainFractalFrequencyElement.value;
                     if(terrainFractalFrequencyNewValue !== terrainFractalFrequency) {
                         terrainFractalFrequency = terrainFractalFrequencyNewValue;
-                        sendValue('http://localhost:8090/api/terrain/fractal/frequency/' + terrainFractalFrequency);
+                        sendValue('http://localhost:8090/api/terrain/fractal/frequency', parseFloat(terrainFractalFrequency));
                     }
                 }
 
@@ -154,7 +160,7 @@
                     const cameraPositionXNewValue = cameraPositionXElement.value;
                     if(cameraPositionXNewValue !== cameraPositionX) {
                         cameraPositionX = cameraPositionXNewValue;
-                        sendValue('http://localhost:8090/api/camera/position/x/' + cameraPositionX);
+                        sendValue('http://localhost:8090/api/camera/position/x', parseFloat(cameraPositionX));
                     }
                 }
 
@@ -162,7 +168,7 @@
                     const cameraPositionYNewValue = cameraPositionYElement.value;
                     if(cameraPositionYNewValue !== cameraPositionY) {
                         cameraPositionY = cameraPositionYNewValue;
-                        sendValue('http://localhost:8090/api/camera/position/y/' + cameraPositionY);
+                        sendValue('http://localhost:8090/api/camera/position/y', parseFloat(cameraPositionY));
                     }
                 }
 
@@ -170,7 +176,7 @@
                     const cameraPositionZNewValue = cameraPositionZElement.value;
                     if(cameraPositionZNewValue !== cameraPositionZ) {
                         cameraPositionZ = cameraPositionZNewValue;
-                        sendValue('http://localhost:8090/api/camera/position/z/' + cameraPositionZ);
+                        sendValue('http://localhost:8090/api/camera/position/z', parseFloat(cameraPositionZ));
                     }
                 }
 
@@ -178,7 +184,7 @@
                     const cameraFieldViewYNewValue = cameraFieldViewYElement.value;
                     if(cameraFieldViewYNewValue !== cameraFieldViewY) {
                         cameraFieldViewY = cameraFieldViewYNewValue;
-                        sendValue('http://localhost:8090/api/camera/fieldview/y/' + cameraFieldViewY);
+                        sendValue('http://localhost:8090/api/camera/fieldview/y', parseFloat(cameraFieldViewY));
                     }
                 }
 
@@ -186,7 +192,7 @@
                     const cameraFarZNewValue = cameraFarZElement.value;
                     if(cameraFarZNewValue !== cameraFarZ) {
                         cameraFarZ = cameraFarZNewValue;
-                        sendValue('http://localhost:8090/api/camera/far/z/' + cameraFarZ);
+                        sendValue('http://localhost:8090/api/camera/far/z', parseFloat(cameraFarZ));
                     }
                 }
 
@@ -194,7 +200,7 @@
                     const cameraTargetXNewValue = cameraTargetXElement.value;
                     if(cameraTargetXNewValue !== cameraTargetX) {
                         cameraTargetX = cameraTargetXNewValue;
-                        sendValue('http://localhost:8090/api/camera/target/x/' + cameraTargetX);
+                        sendValue('http://localhost:8090/api/camera/target/x', parseFloat(cameraTargetX));
                     }
                 }
 
@@ -202,7 +208,7 @@
                     const cameraTargetYNewValue = cameraTargetYElement.value;
                     if(cameraTargetYNewValue !== cameraTargetY) {
                         cameraTargetY = cameraTargetYNewValue;
-                        sendValue('http://localhost:8090/api/camera/target/y/' + cameraTargetY);
+                        sendValue('http://localhost:8090/api/camera/target/y', parseFloat(cameraTargetY));
                     }
                 }
 
@@ -210,7 +216,7 @@
                     const cameraTargetZNewValue = cameraTargetZElement.value;
                     if(cameraTargetZNewValue !== cameraTargetZ) {
                         cameraTargetZ = cameraTargetZNewValue;
-                        sendValue('http://localhost:8090/api/camera/target/z/' + cameraTargetZ);
+                        sendValue('http://localhost:8090/api/camera/target/z', parseFloat(cameraTargetZ));
                     }
                 }
 
@@ -218,7 +224,7 @@
                     const cameraUpXNewValue = cameraUpXElement.value;
                     if(cameraUpXNewValue !== cameraUpX) {
                         cameraUpX = cameraUpXNewValue;
-                        sendValue('http://localhost:8090/api/camera/up/x/' + cameraUpX);
+                        sendValue('http://localhost:8090/api/camera/up/x', parseFloat(cameraUpX));
                     }
                 }
 
@@ -226,7 +232,7 @@
                     const cameraUpYNewValue = cameraUpYElement.value;
                     if(cameraUpYNewValue !== cameraUpY) {
                         cameraUpY = cameraUpYNewValue;
-                        sendValue('http://localhost:8090/api/camera/up/y/' + cameraUpY);
+                        sendValue('http://localhost:8090/api/camera/up/y', parseFloat(cameraUpY));
                     }
                 }
 
@@ -234,7 +240,7 @@
                     const cameraUpZNewValue = cameraUpZElement.value;
                     if(cameraUpZNewValue !== cameraUpZ) {
                         cameraUpZ = cameraUpZNewValue;
-                        sendValue('http://localhost:8090/api/camera/up/z/' + cameraUpZ);
+                        sendValue('http://localhost:8090/api/camera/up/z', parseFloat(cameraUpZ));
                     }
                 }
 
@@ -405,22 +411,24 @@
             <div>
                 <span><h2>Terrain</h2></span>
             </div>
-            <div class="row mb-3 g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="terrainwidth" class="form-label">Width:</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="number" id="terrainwidth" value="50" />
+
+             <div class="mb-3 align-items-center">
+                <div class="row mb-3 g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="terrainwidth" class="form-label">Width:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="terrainwidth" value="50" />
+                    </div>
+                    <div class="col-auto">
+                        <label for="terraindepth" class="form-label">Depth:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="terraindepth" value="50" />
+                    </div>
                 </div>
             </div>
-            <div class="row mb-3 g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="terraindepth" class="form-label">Depth:</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="number" id="terraindepth" value="50">
-                </div>
-            </div>
+
             <div class="row mb-3 g-3 align-items-center">
                 <div class="col-auto">
                     <label for="terrainseed" class="form-label">Seed:</label>
@@ -437,44 +445,44 @@
                     <input type="color" class="form-control form-control-color" id="terraincolor" value="#304630" title="Choose your color">
                 </div>
             </div>
-            <div class="row mb-3 g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="terrainmaxheight" class="form-label">Max Height:</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="number" id="terrainmaxheight" value="4">
-                </div>
-            </div>
-            <div class="row mb-3 g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="terrainfailoff" class="form-label">Failoff:</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="number" id="terrainfailoff" value="200">
-                </div>
-            </div>
-            <div class="row mb-3 g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="terrainz" class="form-label">Z:</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="number" id="terrainz" value="25">
-                </div>
-            </div>
-            <div class="row mb-3 g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="terrainfractaloctaves" class="form-label">Fractal Octaves:</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="number" id="terrainfractaloctaves" value="3">
+
+            <div class="mb-3 align-items-center">
+                <div class="row mb-3 g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="terrainmaxheight" class="form-label">Max Height:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="terrainmaxheight" value="4">
+                    </div>
+                    <div class="col-auto">
+                        <label for="terrainfailoff" class="form-label">Failoff:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="terrainfailoff" value="200">
+                    </div>
+                    <div class="col-auto">
+                        <label for="terrainz" class="form-label">Z:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="terrainz" value="25">
+                    </div>
                 </div>
             </div>
-            <div class="row mb-3 g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="terrainfractalfrequency" class="form-label">Fractal Frequency:</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="number" id="terrainfractalfrequency" value="2">
+
+            <div class="mb-3 align-items-center">
+                <div class="row mb-3 g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="terrainfractaloctaves" class="form-label">Fractal Octaves:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="terrainfractaloctaves" value="3">
+                    </div>
+                    <div class="col-auto">
+                        <label for="terrainfractalfrequency" class="form-label">Fractal Frequency:</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-control" type="number" id="terrainfractalfrequency" value="2">
+                    </div>
                 </div>
             </div>
 
