@@ -2,58 +2,64 @@ use crate::configuration::ConfigurationMessage;
 use actix_web::web;
 use actix_web::HttpResponse;
 use std::sync::mpsc::Sender;
+use serde::Deserialize;
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/width/{width}
+#[derive(Deserialize)]
+pub struct Width {
+    value: f32,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 15.75 }' -X PUT http://127.0.0.1:8090/api/terrain/width
 pub async fn terrain_change_width(
-    path_param: web::Path<String>,
+    data: web::Json<Width>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_width = path_param.into_inner();
-    match new_width.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainWidth(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_width = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainWidth(new_width));
+    HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/depth/{depth}
+#[derive(Deserialize)]
+pub struct Depth {
+    value: f32,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 9.25 }' -X PUT http://127.0.0.1:8090/api/terrain/depth
 pub async fn terrain_change_depth(
-    path_param: web::Path<String>,
+    data: web::Json<Depth>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_depth = path_param.into_inner();
-    match new_depth.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainDepth(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_depth = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainDepth(new_depth));
+    HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/seed/{seed}
+#[derive(Deserialize)]
+pub struct Seed {
+    value: i64,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 42 }' -X PUT http://127.0.0.1:8090/api/terrain/seed
 pub async fn terrain_change_seed(
-    path_param: web::Path<String>,
+    data: web::Json<Seed>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_seed = path_param.into_inner();
-    match new_seed.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainSeed(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_seed = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainSeed(new_seed));
+    HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/color/{color}
+#[derive(Deserialize)]
+pub struct Color {
+    value: String,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": "4955ff" }' -X PUT http://127.0.0.1:8090/api/terrain/color
 pub async fn terrain_change_color(
-    path_param: web::Path<String>,
+    data: web::Json<Color>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_color = path_param.into_inner();
+    let new_color = &data.value;
     if new_color.len() != 6 {
         return HttpResponse::BadRequest().finish();
     }
@@ -73,81 +79,81 @@ pub async fn terrain_change_color(
         Err(_) => return HttpResponse::BadRequest().finish(),
     };
 
-    let _ = tx.send(ConfigurationMessage::TerrainColor(new_color));
+    let _ = tx.send(ConfigurationMessage::TerrainColor(new_color.clone()));
     HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/height/{height}
+#[derive(Deserialize)]
+pub struct MaxHeight {
+    value: f32,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 5.22 }' -X PUT http://127.0.0.1:8090/api/terrain/height
 pub async fn terrain_change_max_height(
-    path_param: web::Path<String>,
+    data: web::Json<MaxHeight>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_max_height = path_param.into_inner();
-    match new_max_height.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainMaxHeight(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_max_height = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainMaxHeight(new_max_height));
+    HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/failoff/{failoff}
+#[derive(Deserialize)]
+pub struct Failoff {
+    value: f32,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 95.48 }' -X PUT http://127.0.0.1:8090/api/terrain/failoff
 pub async fn terrain_change_failoff(
-    path_param: web::Path<String>,
+    data: web::Json<Failoff>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_failoff = path_param.into_inner();
-    match new_failoff.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainFailoff(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_failoff = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainFailoff(new_failoff));
+    HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/z/{z}
+#[derive(Deserialize)]
+pub struct Z {
+    value: f64,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 43.11 }' -X PUT http://127.0.0.1:8090/api/terrain/z
 pub async fn terrain_change_z(
-    path_param: web::Path<String>,
+    data: web::Json<Z>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_z = path_param.into_inner();
-    match new_z.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainZ(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_z = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainZ(new_z));
+    HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/fractal/octaves/{octaves}
+#[derive(Deserialize)]
+pub struct Octaves {
+    value: i32,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 8 }' -X PUT http://127.0.0.1:8090/api/terrain/fractal/octaves
 pub async fn terrain_change_fractal_octaves(
-    path_param: web::Path<String>,
+    data: web::Json<Octaves>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_fractal_octaves = path_param.into_inner();
-    match new_fractal_octaves.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainFractalOctaves(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_fractal_octaves = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainFractalOctaves(new_fractal_octaves));
+    HttpResponse::Ok().finish()
 }
 
-// curl -i -X PUT http://127.0.0.1:8090/api/terrain/fractal/frequency/{frequency}
+#[derive(Deserialize)]
+pub struct FractalFrequency {
+    value: f64,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 6.99 }' -X PUT http://127.0.0.1:8090/api/terrain/fractal/frequency
 pub async fn terrain_change_fractal_frequency(
-    path_param: web::Path<String>,
+    data: web::Json<FractalFrequency>,
     tx: web::Data<Sender<ConfigurationMessage>>,
 ) -> HttpResponse {
-    let new_fractal_frequency = path_param.into_inner();
-    match new_fractal_frequency.parse() {
-        Ok(value) => {
-            let _ = tx.send(ConfigurationMessage::TerrainFractalFrequency(value));
-            HttpResponse::Ok().finish()
-        }
-        Err(_) => HttpResponse::BadRequest().finish(),
-    }
+    let new_fractal_frequency = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainFractalFrequency(new_fractal_frequency));
+    HttpResponse::Ok().finish()
 }

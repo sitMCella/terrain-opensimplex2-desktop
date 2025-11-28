@@ -42,72 +42,72 @@ fn config_app(tx: Sender<ConfigurationMessage>) -> Box<dyn Fn(&mut ServiceConfig
         cfg.app_data(web::Data::new(tx.clone()))
             .service(web::resource("/api/health_check").route(web::get().to(health_check)))
             .service(
-                web::resource("/api/terrain/width/{width}")
+                web::resource("/api/terrain/width")
                     .route(web::put().to(terrain_change_width)),
             )
             .service(
-                web::resource("/api/terrain/depth/{depth}")
+                web::resource("/api/terrain/depth")
                     .route(web::put().to(terrain_change_depth)),
             )
             .service(
-                web::resource("/api/terrain/seed/{seed}").route(web::put().to(terrain_change_seed)),
+                web::resource("/api/terrain/seed").route(web::put().to(terrain_change_seed)),
             )
             .service(
-                web::resource("/api/terrain/color/{color}")
+                web::resource("/api/terrain/color")
                     .route(web::put().to(terrain_change_color)),
             )
             .service(
-                web::resource("/api/terrain/height/{height}")
+                web::resource("/api/terrain/height")
                     .route(web::put().to(terrain_change_max_height)),
             )
             .service(
-                web::resource("/api/terrain/failoff/{failoff}")
+                web::resource("/api/terrain/failoff")
                     .route(web::put().to(terrain_change_failoff)),
             )
-            .service(web::resource("/api/terrain/z/{z}").route(web::put().to(terrain_change_z)))
+            .service(web::resource("/api/terrain/z").route(web::put().to(terrain_change_z)))
             .service(
-                web::resource("/api/terrain/fractal/octaves/{octaves}")
+                web::resource("/api/terrain/fractal/octaves")
                     .route(web::put().to(terrain_change_fractal_octaves)),
             )
             .service(
-                web::resource("/api/terrain/fractal/frequency/{frequency}")
+                web::resource("/api/terrain/fractal/frequency")
                     .route(web::put().to(terrain_change_fractal_frequency)),
             )
             .service(
-                web::resource("/api/camera/position/x/{x}")
+                web::resource("/api/camera/position/x")
                     .route(web::put().to(camera_change_position_x)),
             )
             .service(
-                web::resource("/api/camera/position/y/{y}")
+                web::resource("/api/camera/position/y")
                     .route(web::put().to(camera_change_position_y)),
             )
             .service(
-                web::resource("/api/camera/position/z/{z}")
+                web::resource("/api/camera/position/z")
                     .route(web::put().to(camera_change_position_z)),
             )
             .service(
-                web::resource("/api/camera/fieldview/y/{y}")
+                web::resource("/api/camera/fieldview/y")
                     .route(web::put().to(camera_change_field_view_y)),
             )
             .service(
-                web::resource("/api/camera/far/z/{z}").route(web::put().to(camera_change_far_z)),
+                web::resource("/api/camera/far/z").route(web::put().to(camera_change_far_z)),
             )
             .service(
-                web::resource("/api/camera/target/x/{x}")
+                web::resource("/api/camera/target/x")
                     .route(web::put().to(camera_change_target_x)),
             )
             .service(
-                web::resource("/api/camera/target/y/{y}")
+                web::resource("/api/camera/target/y")
                     .route(web::put().to(camera_change_target_y)),
             )
             .service(
-                web::resource("/api/camera/target/z/{z}")
+                web::resource("/api/camera/target/z")
                     .route(web::put().to(camera_change_target_z)),
             )
-            .service(web::resource("/api/camera/up/x/{x}").route(web::put().to(camera_change_up_x)))
-            .service(web::resource("/api/camera/up/y/{y}").route(web::put().to(camera_change_up_y)))
+            .service(web::resource("/api/camera/up/x").route(web::put().to(camera_change_up_x)))
+            .service(web::resource("/api/camera/up/y").route(web::put().to(camera_change_up_y)))
             .service(
-                web::resource("/api/camera/up/z/{z}").route(web::put().to(camera_change_up_z)),
+                web::resource("/api/camera/up/z").route(web::put().to(camera_change_up_z)),
             );
     })
 }
