@@ -14,18 +14,18 @@
 
 ## Introduction
 
-Generation and visualization of terrains created using OpenSimplex 2 with 3D noise.
+Terrain generation and visualization using OpenSimplex 2 and 3D noise.
 
 This project includes code originally made available under CC0 1.0 Universal (Public Domain).
 Original source: https://github.com/KdotJPG/OpenSimplex2
 
 ## Development
 
-The project consists of a Rust application for the visualization of a terrain using the winit and the tree-d libraries.
+The project consists of a Rust application for visualizing a terrain using the winit and three-d libraries.
 
-The terrain is generated using the OpenSimplex 2 algorithm embedded as Rust code.
+The terrain is generated using the Rust implementation of the OpenSimplex 2 algorithm.
 
-A control panel html page is used for adjusting the terrain and camera parameters.
+A control-panel HTML page is used to adjust the terrain and camera parameters.
 
 ### Setup Development
 
