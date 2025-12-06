@@ -36,22 +36,24 @@ pub fn window(rx: Receiver<ConfigurationMessage>) {
     let context = WindowedContext::from_winit_window(&window, SurfaceSettings::default()).unwrap();
 
     let mut camera_configuration = CameraConfiguration::new(
-        35.0, 22.0, 82.0, 45.0, 100.0, 18.0, -10.0, 0.0, 0.0, 15.0, 0.0,
+        9.0, 12.0, 32.0, 45.0, 200.0, 10.0, 2.0, 16.0, 0.0, 3.0, 0.0,
     );
 
     let mut camera = configure_camera(&camera_configuration);
     let mut control = OrbitControl::new(camera.target(), 1.0, 100.0);
 
     let mut terrain_configuration = TerrainConfiguration::new(
-        50.0,
-        50.0,
+        20.0,
+        20.0,
         40000345266,
+        0.1,
         "304630".to_string(),
-        4.0,
-        200.0,
-        25.0,
-        3,
         2.0,
+        200.0,
+        21.0,
+        8,
+        0.4,
+        1.0,
     );
 
     let mut model = configure_terrain(&context, &terrain_configuration);
