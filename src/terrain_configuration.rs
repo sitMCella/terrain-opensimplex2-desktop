@@ -2,18 +2,18 @@ use crate::configuration::ConfigurationMessage;
 use crate::smooth::noise3_ImproveXZ;
 use three_d::*;
 
-const CUBE_SIZE: f32 = 1.0;
-
 #[derive(Debug, Clone)]
 pub struct TerrainConfiguration {
     tot_width: f32,
     tot_depth: f32,
     seed: i64,
+    cube_size: f32,
     color: String,
     max_height: f32,
     failoff: f32,
     z: f64,
     fractal_octaves: i32,
+    fractal_amplitude: f32,
     fractal_frequency: f64,
 }
 
@@ -22,22 +22,26 @@ impl TerrainConfiguration {
         tot_width: f32,
         tot_depth: f32,
         seed: i64,
+        cube_size: f32,
         color: String,
         max_height: f32,
         failoff: f32,
         z: f64,
         fractal_octaves: i32,
+        fractal_amplitude: f32,
         fractal_frequency: f64,
     ) -> Self {
         Self {
             tot_width,
             tot_depth,
             seed,
+            cube_size,
             color,
             max_height,
             failoff,
             z,
             fractal_octaves,
+            fractal_amplitude,
             fractal_frequency,
         }
     }
@@ -59,15 +63,40 @@ fn fractal_noise(
             f64::from(depth) * frequency,
             terrain_configuration.z,
         ) * amplitude;
-        amplitude *= 0.5;
+        amplitude *= terrain_configuration.fractal_amplitude;
         frequency *= terrain_configuration.fractal_frequency;
     }
-    height
+    let max_height = 2.0 * (1.0 - 0.5_f32.powi(octaves));
+
+    // Normalize to [0,1]
+    (height / max_height + 1.0) * 0.5
+}
+
+const CURVE: &[(f32, f32)] = &[
+    (0.0, 0.0),
+    (0.2, 0.02),
+    (0.3, 0.05),
+    (0.5, 0.15),
+    (0.7, 0.35),
+    (0.85, 0.6),
+    (0.95, 0.8),
+    (1.0, 1.0),
+];
+
+fn piecewise_linear(x: f32) -> f32 {
+    for w in CURVE.windows(2) {
+        let (x0, y0) = w[0];
+        let (x1, y1) = w[1];
+
+        if x <= x1 {
+            return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+        }
+    }
+    CURVE.last().unwrap().1
 }
 
 fn adjust_height(terrain_configuration: &TerrainConfiguration, height: f32) -> f32 {
-    let stretch_height = height * terrain_configuration.max_height;
-    stretch_height.clamp(0.0, terrain_configuration.max_height)
+    height * terrain_configuration.max_height
 }
 
 pub fn configure_terrain(
@@ -84,19 +113,20 @@ pub fn configure_terrain(
         depth = 0.0;
         while depth < terrain_configuration.tot_depth {
             let value = fractal_noise(terrain_configuration, width, depth);
-            let stretch_value = adjust_height(terrain_configuration, value);
+            let value_piecewise = piecewise_linear(value);
+            let stretch_value = adjust_height(terrain_configuration, value_piecewise);
             let dist = (width * width + depth * depth).sqrt();
             let falloff = (1.0 - (dist / terrain_configuration.failoff)).max(0.0);
             let cube = Cube {
                 x: width,
                 y: depth,
-                z: stretch_value * falloff + CUBE_SIZE,
+                z: stretch_value * falloff + terrain_configuration.cube_size,
             };
             terrain_layer.push(cube);
-            depth += CUBE_SIZE;
+            depth += terrain_configuration.cube_size;
         }
         terrain.push(terrain_layer);
-        width += CUBE_SIZE;
+        width += terrain_configuration.cube_size;
     }
 
     let cpu_mesh = cubes_to_voxel_mesh(&terrain, terrain_configuration);
@@ -191,52 +221,54 @@ fn cubes_to_voxel_mesh(
     let mut colors: Vec<Srgba> = Vec::new();
 
     let color_r = u8::from_str_radix(&terrain_configuration.color[0..2], 16).unwrap();
-
     let color_g = u8::from_str_radix(&terrain_configuration.color[2..4], 16).unwrap();
-
     let color_b = u8::from_str_radix(&terrain_configuration.color[4..6], 16).unwrap();
 
-    let base_color = color_g;
+    let base_color_red = color_r;
+    let base_color_green = color_g;
+    let base_color_blue = color_b;
 
     for row in cubes {
         for cube in row {
-            if cube.z < 1.0 {
-                continue;
-            }
+            let height_trunc = cube.z / terrain_configuration.cube_size;
+            let fractional_part = cube.z % terrain_configuration.cube_size;
 
-            let height_trunc = cube.z.trunc();
-            let fractional_part = cube.z.fract();
-
-            let height = height_trunc.floor() as i32;
+            let top_level = height_trunc.floor() as i32;
 
             // stack from ground (0) up to cube.z
-            for level in 1..height {
-                let base = vec3(cube.x, level as f32 * CUBE_SIZE, cube.y);
+            let mut height: f32 = 0.0;
+            for level in 1..top_level {
+                let base = vec3(cube.x, height, cube.y);
 
-                add_cube(&mut positions, &mut indices, base, CUBE_SIZE, CUBE_SIZE);
+                add_cube(&mut positions, &mut indices, base, terrain_configuration.cube_size, terrain_configuration.cube_size);
 
                 // darker color at bottom, lighter at top
                 for _ in 0..8 {
-                    let t = cube.z - ((height - level + 1) as f32 / height as f32 * 0.5);
-                    let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
-                    colors.push(Srgba::new(color_r, green, color_b, 255));
+                    let t = cube.z - ((top_level as f32 - level as f32 + 2.0) as f32 / top_level as f32 * 0.5);
+                    let red = (base_color_red as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                    let green = (base_color_green as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                    let blue = (base_color_blue as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                    colors.push(Srgba::new(red, green, blue, 255));
                 }
+                height += terrain_configuration.cube_size;
             }
 
-            let base = vec3(cube.x, CUBE_SIZE * height as f32, cube.y);
+            let base = vec3(cube.x, height, cube.y);
 
             add_cube(
                 &mut positions,
                 &mut indices,
                 base,
-                CUBE_SIZE,
+                terrain_configuration.cube_size,
                 fractional_part,
             );
 
             for _ in 0..8 {
-                let t = cube.z;
-                let green = (base_color as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
-                colors.push(Srgba::new(color_r, green, color_b, 255));
+                let t = cube.z - (2.0 as f32 / top_level as f32 * 0.5);
+                let red = (base_color_red as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                let green = (base_color_green as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                let blue = (base_color_blue as f32 + 0.25 + (0.45 * t) * 50.0) as u8;
+                colors.push(Srgba::new(red, green, blue, 255));
             }
         }
     }
@@ -266,6 +298,10 @@ pub fn update_configuration(
             seed: value,
             ..terrain_configuration
         },
+        Some(ConfigurationMessage::TerrainCubeSize(value)) => TerrainConfiguration {
+            cube_size: value,
+            ..terrain_configuration
+        },
         Some(ConfigurationMessage::TerrainColor(value)) => TerrainConfiguration {
             color: value,
             ..terrain_configuration
@@ -284,6 +320,10 @@ pub fn update_configuration(
         },
         Some(ConfigurationMessage::TerrainFractalOctaves(value)) => TerrainConfiguration {
             fractal_octaves: value,
+            ..terrain_configuration
+        },
+        Some(ConfigurationMessage::TerrainFractalAmplitude(value)) => TerrainConfiguration {
+            fractal_amplitude: value,
             ..terrain_configuration
         },
         Some(ConfigurationMessage::TerrainFractalFrequency(value)) => TerrainConfiguration {

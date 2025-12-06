@@ -50,6 +50,25 @@ pub async fn terrain_change_seed(
 }
 
 #[derive(Deserialize)]
+pub struct CubeSize {
+    value: f32,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 0.2 }' -X PUT http://127.0.0.1:8090/api/terrain/cubesize
+pub async fn terrain_change_cube_size(
+    data: web::Json<CubeSize>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_cube_size = data.value;
+    println!("new_cube_size {}", new_cube_size);
+    if new_cube_size <= 0.0f32 {
+        return HttpResponse::BadRequest().finish();
+    }
+    let _ = tx.send(ConfigurationMessage::TerrainCubeSize(new_cube_size));
+    HttpResponse::Ok().finish()
+}
+
+#[derive(Deserialize)]
 pub struct Color {
     value: String,
 }
@@ -140,6 +159,21 @@ pub async fn terrain_change_fractal_octaves(
 ) -> HttpResponse {
     let new_fractal_octaves = data.value;
     let _ = tx.send(ConfigurationMessage::TerrainFractalOctaves(new_fractal_octaves));
+    HttpResponse::Ok().finish()
+}
+
+#[derive(Deserialize)]
+pub struct FractalAmplitude {
+    value: f32,
+}
+
+// curl -i -H "Content-Type: application/json" -d '{ "value": 0.25 }' -X PUT http://127.0.0.1:8090/api/terrain/fractal/amplitude
+pub async fn terrain_change_fractal_amplitude(
+    data: web::Json<FractalAmplitude>,
+    tx: web::Data<Sender<ConfigurationMessage>>,
+) -> HttpResponse {
+    let new_fractal_amplitude = data.value;
+    let _ = tx.send(ConfigurationMessage::TerrainFractalAmplitude(new_fractal_amplitude));
     HttpResponse::Ok().finish()
 }
 
