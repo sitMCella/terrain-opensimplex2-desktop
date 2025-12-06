@@ -46,8 +46,7 @@ impl TerrainConfiguration {
 fn fractal_noise(
     terrain_configuration: &TerrainConfiguration,
     width: f32,
-    depth: f32,
-    z: f64,
+    depth: f32
 ) -> f32 {
     let mut height: f32 = 0.0;
     let mut amplitude: f32 = 1.0;
@@ -58,13 +57,17 @@ fn fractal_noise(
             terrain_configuration.seed,
             f64::from(width) * frequency,
             f64::from(depth) * frequency,
-            z,
+            terrain_configuration.z,
         ) * amplitude;
         amplitude *= 0.5;
         frequency *= terrain_configuration.fractal_frequency;
     }
-    height *= terrain_configuration.max_height;
-    height.clamp(0.0, terrain_configuration.max_height)
+    height
+}
+
+fn adjust_height(terrain_configuration: &TerrainConfiguration, height: f32) -> f32 {
+    let stretch_height = height * terrain_configuration.max_height;
+    stretch_height.clamp(0.0, terrain_configuration.max_height)
 }
 
 pub fn configure_terrain(
@@ -72,7 +75,6 @@ pub fn configure_terrain(
     terrain_configuration: &TerrainConfiguration,
 ) -> Gm<Mesh, ColorMaterial> {
     let mut terrain: Vec<Vec<Cube>> = Vec::new();
-    let z: f64 = terrain_configuration.z;
 
     let mut width: f32 = 0.0;
     let mut depth: f32;
@@ -81,13 +83,14 @@ pub fn configure_terrain(
         let mut terrain_layer: Vec<Cube> = Vec::new();
         depth = 0.0;
         while depth < terrain_configuration.tot_depth {
-            let value = fractal_noise(terrain_configuration, width, depth, z);
+            let value = fractal_noise(terrain_configuration, width, depth);
+            let stretch_value = adjust_height(terrain_configuration, value);
             let dist = (width * width + depth * depth).sqrt();
             let falloff = (1.0 - (dist / terrain_configuration.failoff)).max(0.0);
             let cube = Cube {
                 x: width,
                 y: depth,
-                z: value * falloff + CUBE_SIZE,
+                z: stretch_value * falloff + CUBE_SIZE,
             };
             terrain_layer.push(cube);
             depth += CUBE_SIZE;
